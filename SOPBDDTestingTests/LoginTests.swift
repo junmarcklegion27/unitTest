@@ -13,6 +13,8 @@ class LoginTests: XCTestCase {
 
     private var loginVC: LoginViewController?
     
+    // MARK: - Setup
+    
     override func setUpWithError() throws {
         loginVC = LoginViewController()
         let email: String = "demo@ufs.com"
@@ -25,7 +27,9 @@ class LoginTests: XCTestCase {
         }
     }
     
-    func testKeychainExists() {
+    // MARK: - Test if Keychain Exists
+    
+    func testUsernameKeychainExists() {
         do {
             let keyChainExists = try Keychain.exists(account: "username")
             XCTAssertTrue(keyChainExists)
@@ -34,28 +38,51 @@ class LoginTests: XCTestCase {
         }
     }
     
+    func testPasswordKeychainExists() {
+        do {
+            let keyChainExists = try Keychain.exists(account: "password")
+            XCTAssertTrue(keyChainExists)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    // MARK: - Test if Login Credentials not nil
+    
     func testLoginCredentialsNotNil() {
         let email: String = "demo@ufs.com"
         let password: String = "Pass1234"
         let sut = LoginCredentials(email: email, password: password)
         XCTAssertNotNil(sut)
     }
+    
+    // MARK: - Test if Email is Valid
 
     func testEmailValidity() throws {
         let email: String = "demo@ufs.com"
         XCTAssertTrue(email.isValidEmail())
     }
-
+    
+    // MARK: - Test if Password is Valid
+    
     func testPasswordValidity() throws {
         let password: String = "Pass1234"
         XCTAssertTrue(password.isValidPassword())
     }
     
+    // MARK: Given that I am an SR and I am online or offline
+    
+    /*  When I input valid Username/Email and Password
+        Then it should be accepted and show home screen */
+
     func testEmailAndPasswordValidity() throws {
         let email: String = "demo@ufs.com"
         let password: String = "Pass1234"
         XCTAssertTrue(loginVC!.isEmailAndPassWordValid(email: email, password: password))
     }
+    
+    /*  When I input an valid Username/Email and invalid Password
+        Then a popup should show */
 
     func testValidEmailAndInvalidPassword() throws {
         let email: String = "demo@ufs.com"
@@ -63,17 +90,27 @@ class LoginTests: XCTestCase {
         XCTAssertFalse(loginVC!.isEmailAndPassWordValid(email: email, password: password))
     }
     
+    /*  When I input an invalid Username/Email and valid Password
+        Then a popup should show */
+    
     func testInvalidEmailAndValidPassword() throws {
         let email: String = "demo@.com"
         let password: String = "Pass1234"
         XCTAssertFalse(loginVC!.isEmailAndPassWordValid(email: email, password: password))
     }
     
+    /*  When I input an invalid Username/Email and  Password
+        Then a popup should show */
+    
     func testInvalidEmailAndPassword() throws {
         let email: String = "@.com"
         let password: String = "passonetwo"
         XCTAssertFalse(loginVC!.isEmailAndPassWordValid(email: email, password: password))
     }
+    
+    // MARK: Given that I am an SR and I am offline When I input valid Username/Email and Password
+    
+    // And Correct Username/Email and Password
     
     func testAPIValidAndCorrectEmailAndPassword() {
         let email: String = "demo@ufs.com"
@@ -88,6 +125,8 @@ class LoginTests: XCTestCase {
         XCTAssertTrue(apiClient.isAPISuccessful)
     }
     
+    // And incorrect Username/Email and password
+    
     func testAPIValidEmailAndPassword_AndIncorrectEmailAndPassword() {
         let email: String = "demo@ufc.com"
         let password: String = "Pass1235"
@@ -100,6 +139,8 @@ class LoginTests: XCTestCase {
       
         XCTAssertFalse(apiClient.isAPISuccessful)
     }
+    
+    // And incorrect Username/Email and correct Password
     
     func testAPIValidEmailAndPassword_AndIncorrectEmailAndCorrectPassword() {
         let email: String = "demo@ufc.com"
@@ -114,6 +155,8 @@ class LoginTests: XCTestCase {
         XCTAssertFalse(apiClient.isAPISuccessful)
     }
     
+    // And correct Username/Email and inorrect Password
+    
     func testAPIValidEmailAndPassword_AndCorrectEmailAndIncorrectPassword() {
         let email: String = "demo@ufs.com"
         let password: String = "Pass1235"
@@ -127,11 +170,17 @@ class LoginTests: XCTestCase {
         XCTAssertFalse(apiClient.isAPISuccessful)
     }
     
+    // MARK: Given that I am an SR and I am online When I input valid Username/Email and Password
+    
+    // And correct Username/Email and Password
+    
     func testKeyChainValidAndCorrectEmailAndPassword() {
         let email: String = "demo@ufs.com"
         let password: String = "Pass1234"
         XCTAssertTrue(loginVC!.isEmailAndPasswordMatchesWithKeyChain(email: email, password: password))
     }
+    
+    // And incorrect Username/Email and Password
     
     func testKeyChainValidEmailAndPassword_AndIncorrectEmailAndPassword() {
         let email: String = "demo@ufc.com"
@@ -139,11 +188,15 @@ class LoginTests: XCTestCase {
         XCTAssertFalse(loginVC!.isEmailAndPasswordMatchesWithKeyChain(email: email, password: password))
     }
     
+    // And incorrect Username/Email and correct Password
+    
     func testKeyChainValidEmailAndPassword_AndIncorrectEmailAndCorrectPassword() {
         let email: String = "demo@ufc.com"
         let password: String = "Pass1234"
         XCTAssertFalse(loginVC!.isEmailAndPasswordMatchesWithKeyChain(email: email, password: password))
     }
+    
+    // And correct Username/Email and incorrect Password
     
     func testKeychainValidEmailAndPassword_AndCorrectEmailAndIncorrectPassword() {
         let email: String = "demo@ufs.com"
